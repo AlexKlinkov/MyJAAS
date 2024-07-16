@@ -1,0 +1,46 @@
+  logging:
+    level:
+      root: INFO # level of logging for whole the app
+  spring:
+    variable_admins_for_add_in_BD:
+      username:
+        admin_1: FIRST_ADMIN
+      email:
+        admin_1: ADMIN_EMAIL@email.ru
+      age:
+        admin_1: 33
+      login:
+        admin_1: ADMIN's login
+      password:
+        admin_1: ADMIN_PASSWORD
+      role:
+        admin_1: ADMIN
+      subscription:
+        admin_1: PREMIUM
+      is_locked_account:
+        admin_1: false
+    datasource:
+      url: jdbc:postgresql://localhost:5432/postgres
+      username: Admin
+      password: 123
+      driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: create-drop #for test use 'create-drop', for normal work to chose 'none' or 'update' mode
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+      database: postgresql
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+  server:
+    port: 8443
+    ssl:
+      key-store: classpath:static/keystore.p12
+      key-store-password: firstattempt
+      key-store-type: PKCS12
+      key-alias: tomcat
+      enabled: true
+    servlet:
+      session:
+        timeout: 3600m # Set session timeout to 1 day

@@ -1,0 +1,50 @@
+This proccess includes creating a key pair:
+
+You can use the 'keytool' utility, which comes with the JDK, to generate a key pair. 
+(apply for this goal "IntelliJ IDEA's Terminal").
+
+1. put you own command 'keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -validity 365 -keystore mykeystore.jks' in Terminal (without quates).
+
+where params mean:
+
+-alias myalias: An alias for your key entry in the keystore. (like key of a map, where value will be your generated self-signed sirtificate)
+-keyalg RSA: The algorithm for the key (RSA in this case).
+-keysize 2048: The size of the key. (Standard for most encryption needs, providing a good balance of security and performance)
+-validity 365: The validity period of the key (in days).
+-keystore mykeystore.jks: The name of the keystore file to create.
+
+NOTICE: When you generate a key pair using 'keytool', the keystore will be created if it does not already exist!
+	When you run this command, keytool will prompt you for various details like your name, organizational unit, 
+	organization, city, state, and country code. It will also ask for a password for the keystore.
+
+2. Now you can change these part in an application.yml file on your own params:
+
+// 
+server:
+    port: 8443
+    ssl:
+      key-store: classpath:static/keystore.p12 # (put your path to where your self-signed certificate is situated)
+      key-store-password: yourpassword
+      key-store-type: PKCS12 # (default type from java 9)
+      key-alias: youralias
+      enabled: true
+//
+
+Congrats!
+Your app is set in context security and you can send queries using https protocol.
+
+OPTIONAL:
+
+For all this commands you need to be in the same directoria, where 'mykeystore' is situated!
+
+Export the Certificate:
+'keytool -export -alias myalias -file mycert.crt -keystore mykeystore.jks'
+
+Import the Certificate into Another Keystore:
+'keytool -import -alias myalias -file mycert.crt -keystore anotherkeystore.jks'
+
+Delete a key pair:
+'keytool -delete -alias myalias -keystore mykeystore.p12'
+
+Get list of a key pair:
+'keytool -list -keystore mykeystore.p12'

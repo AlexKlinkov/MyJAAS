@@ -1,0 +1,2136 @@
+{
+	"info": {
+		"_postman_id": "013f9869-af6a-40c5-9508-e69b13d5a7aa",
+		"name": "MyJAAS (test_queries)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29002324"
+	},
+	"item": [
+		{
+			"name": "register_form_only_for_demonstrate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8443/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user1_registration_free_subscription",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON",
+							"var jsonData = pm.response.json();",
+							"// Extract the token value from the JSON object",
+							"var tokenValue = jsonData.jwt_token;",
+							"// Set the extracted token value in the environment variable",
+							"pm.environment.set(\"token_for_user_1\", tokenValue);",
+							"",
+							"// Test that status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "username1",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "20",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "user1@email.com",
+							"type": "text"
+						},
+						{
+							"key": "login",
+							"value": "login1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password1",
+							"type": "text"
+						},
+						{
+							"key": "repeatPassword",
+							"value": "password1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_form_to_set_CSRF_token_user_1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get HTML-answer as text\r",
+							"const responseText = pm.response.text();\r",
+							"// Look for a line with CSRF-token\r",
+							"const csrfTokenRegex = /<input type=\"hidden\" name=\"_csrf\" value=\"([^\"]+)\"/;\r",
+							"const csrfTokenMatch = csrfTokenRegex.exec(responseText);\r",
+							"if (csrfTokenMatch) {\r",
+							"    const csrfToken = csrfTokenMatch[1];\r",
+							"    // Save CSRF-token in the environment variable\r",
+							"    pm.environment.set(\"csrf_token_for_user_1\", csrfToken);\r",
+							"} else {\r",
+							"    console.log(\"CSRF token not found\");\r",
+							"}\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8443/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user1_authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON\r",
+							"var jsonData = pm.response.json();\r",
+							"// Extract the token value from the JSON object\r",
+							"var tokenValue = jsonData.jwt_token;\r",
+							"// Set the extracted token value in the environment variable\r",
+							"pm.environment.set(\"token_for_user_1\", tokenValue);\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "login",
+							"value": "login1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/perform-login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"perform-login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user1_info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/user/info",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_user_1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_user_1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"usernameUPDATED\",\r\n    \"email\": \"testa@emailUPDATED.ru\",\r\n    \"age\": 21\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user/update",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_update_form_only_for_demonstrate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/user/account/update/loginandpassword",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"account",
+						"update",
+						"loginandpassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user2_registration_standard_subscription",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON",
+							"var jsonData = pm.response.json();",
+							"// Extract the token value from the JSON object",
+							"var tokenValue = jsonData.jwt_token;",
+							"// Set the extracted token value in the environment variable",
+							"pm.environment.set(\"token_for_user_2\", tokenValue);",
+							"",
+							"// Test that status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "username2",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "user2@email.com",
+							"type": "text"
+						},
+						{
+							"key": "login",
+							"value": "login2",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password2",
+							"type": "text"
+						},
+						{
+							"key": "repeatPassword",
+							"value": "password2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_form_to_set_CSRF_token_user_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get HTML-answer as text\r",
+							"const responseText = pm.response.text();\r",
+							"// Look for a line with CSRF-token\r",
+							"const csrfTokenRegex = /<input type=\"hidden\" name=\"_csrf\" value=\"([^\"]+)\"/;\r",
+							"const csrfTokenMatch = csrfTokenRegex.exec(responseText);\r",
+							"if (csrfTokenMatch) {\r",
+							"    const csrfToken = csrfTokenMatch[1];\r",
+							"    // Save CSRF-token in the environment variable\r",
+							"    pm.environment.set(\"csrf_token_for_user_2\", csrfToken);\r",
+							"} else {\r",
+							"    console.log(\"CSRF token not found\");\r",
+							"}\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followRedirects": false,
+				"disableUrlEncoding": false
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_2}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8443/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user2_authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON\r",
+							"var jsonData = pm.response.json();\r",
+							"// Extract the token value from the JSON object\r",
+							"var tokenValue2 = jsonData.jwt_token;\r",
+							"// Set the extracted token value in the environment variable\r",
+							"pm.environment.set(\"token_for_user_2\", tokenValue2);\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "login",
+							"value": "login2",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/perform-login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"perform-login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user3_registration_premium_subscription",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON",
+							"var jsonData = pm.response.json();",
+							"// Extract the token value from the JSON object",
+							"var tokenValue = jsonData.jwt_token;",
+							"// Set the extracted token value in the environment variable",
+							"pm.environment.set(\"token_for_user_3\", tokenValue);",
+							"",
+							"// Test that status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "username3",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "25",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "user3@email.com",
+							"type": "text"
+						},
+						{
+							"key": "login",
+							"value": "login3",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password3",
+							"type": "text"
+						},
+						{
+							"key": "repeatPassword",
+							"value": "password3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_form_to_set_CSRF_token_user_3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get HTML-answer as text\r",
+							"const responseText = pm.response.text();\r",
+							"// Look for a line with CSRF-token\r",
+							"const csrfTokenRegex = /<input type=\"hidden\" name=\"_csrf\" value=\"([^\"]+)\"/;\r",
+							"const csrfTokenMatch = csrfTokenRegex.exec(responseText);\r",
+							"if (csrfTokenMatch) {\r",
+							"    const csrfToken = csrfTokenMatch[1];\r",
+							"    // Save CSRF-token in the environment variable\r",
+							"    pm.environment.set(\"csrf_token_for_user_3\", csrfToken);\r",
+							"} else {\r",
+							"    console.log(\"CSRF token not found\");\r",
+							"}\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_3}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8443/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user3_authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON\r",
+							"var jsonData = pm.response.json();\r",
+							"// Extract the token value from the JSON object\r",
+							"var tokenValue3 = jsonData.jwt_token;\r",
+							"// Set the extracted token value in the environment variable\r",
+							"pm.environment.set(\"token_for_user_3\", tokenValue3);\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "login",
+							"value": "login3",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/perform-login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"perform-login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body as JSON\r",
+							"var jsonData = pm.response.json();\r",
+							"// Extract the token value from the JSON object\r",
+							"var tokenValueAdmin = jsonData.jwt_token;\r",
+							"// Set the extracted token value in the environment variable\r",
+							"pm.environment.set(\"token_for_admin\", tokenValueAdmin);\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "login",
+							"value": "ADMIN's login",
+							"description": "by default (pointed in application.yml file)",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "ADMIN_PASSWORD",
+							"description": "by default (pointed in application.yml file)",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:8443/perform-login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"perform-login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_form_to_set_CSRF_token_admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get HTML-answer as text\r",
+							"const responseText = pm.response.text();\r",
+							"// Look for a line with CSRF-token\r",
+							"const csrfTokenRegex = /<input type=\"hidden\" name=\"_csrf\" value=\"([^\"]+)\"/;\r",
+							"const csrfTokenMatch = csrfTokenRegex.exec(responseText);\r",
+							"if (csrfTokenMatch) {\r",
+							"    const csrfToken = csrfTokenMatch[1];\r",
+							"    // Save CSRF-token in the environment variable\r",
+							"    pm.environment.set(\"csrf_token_for_admin\", csrfToken);\r",
+							"} else {\r",
+							"    console.log(\"CSRF token not found\");\r",
+							"}\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// because all tests is being started using one the same IP address\r",
+							"pm.cookies.jar().clear(pm.request.url);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8443/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_lock_user_account_1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_admin}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userEmailForBlock\": \"testa@emailUPDATED.ru\",\r\n    \"commentOfBlocking\": \"try to change field 'isLockedAccount', after this field has to be equal TRUE\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/admin/user/lockuseraccount",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"lockuseraccount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_info_is_locked_account_1_now_TRUE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"isLockedAccount equal TRUE\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.isUserAccountLocked).to.eql(true);\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/admin/user/info/2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"info",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "free_resources_by_user1_when_user_locked",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/free",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"free"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users_info_by_admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/admin/users/info",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"users",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_info_by_user_id_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/admin/user/info/2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"info",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin_unock_user_account_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_admin}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userEmailForUnBlock\": \"testa@emailUPDATED.ru\",\r\n    \"commentOfUnBlocking\": \"try to change field 'isLockedAccount', after this field has to be equal FALSE\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/admin/user/unlockuseraccount",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"unlockuseraccount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user_info_is_locked_account_2_now_FALSE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"isLockedAccount equal TRUE\", () => {\r",
+							"  const responseJson = pm.response.json();\r",
+							"  pm.expect(responseJson.isUserAccountLocked).to.eql(false);\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/admin/user/info/2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"info",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "free_resources_by_user1_when_user_again_UNLOCKED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/free",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"free"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upgrade_subscription_to_STANDARD_for_user_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_admin}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/admin/user/info/3/update/on/subscription?newSubscription=standard",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"info",
+						"3",
+						"update",
+						"on",
+						"subscription"
+					],
+					"query": [
+						{
+							"key": "newSubscription",
+							"value": "standard"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "standard_resources_by_user_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_2}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "login",
+							"value": "newLogin1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "newPassword1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/standard",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"standard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upgrade_subscription_to_PREMIUM_for_user_3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_admin}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_admin}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/admin/user/info/4/update/on/subscription?newSubscription=premium",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"admin",
+						"user",
+						"info",
+						"4",
+						"update",
+						"on",
+						"subscription"
+					],
+					"query": [
+						{
+							"key": "newSubscription",
+							"value": "premium"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "premium_resources_by_user_3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_3}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/premium",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"premium"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "standard_resources_by_user_3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_3}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/standard",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"standard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "free_resources_by_user_3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_3}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/free",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"free"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "a_warn_about_raising_subscription_to_standard_for_user_1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 406\", function () {\r",
+							"    pm.response.to.have.status(406);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/standard",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"standard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "a_warn_about_raising_subscription_to_premium_for_user_1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 406\", function () {\r",
+							"    pm.response.to.have.status(406);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/premium",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"premium"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user2_logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"followRedirects": false
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_2}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_user_2}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:8443/my/logout",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"my",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "standard_resources_by_user_2_after_logged_out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_2}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/authorized/resources/standard",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"authorized",
+						"resources",
+						"standard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_form_to_set_CSRF_token_user_1_refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get HTML-answer as text\r",
+							"const responseText = pm.response.text();\r",
+							"// Look for a line with CSRF-token\r",
+							"const csrfTokenRegex = /<input type=\"hidden\" name=\"_csrf\" value=\"([^\"]+)\"/;\r",
+							"const csrfTokenMatch = csrfTokenRegex.exec(responseText);\r",
+							"if (csrfTokenMatch) {\r",
+							"    const csrfToken = csrfTokenMatch[1];\r",
+							"    // Save CSRF-token in the environment variable\r",
+							"    pm.environment.set(\"csrf_token_for_user_1\", csrfToken);\r",
+							"} else {\r",
+							"    console.log(\"CSRF token not found\");\r",
+							"}\r",
+							"\r",
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// because all tests is being started using one the same IP address\r",
+							"pm.cookies.jar().clear(pm.request.url);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:8443/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8443",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user1_updates_login_and_password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test that all is ok\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_for_user_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-CSRF-TOKEN",
+						"value": "{{csrf_token_for_user_1}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "login",
+							"value": "newLogin1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "newPassword1",
+							"type": "text"
+						},
+						{
+							"key": "repeatPassword",
+							"value": "newPassword1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURL}}/user/account/perform-update",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"account",
+						"perform-update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "{{token}}"
+		},
+		{
+			"key": "token_for_user_1",
+			"value": "{{token_for_user_1}}"
+		}
+	]
+}
